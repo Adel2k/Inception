@@ -1,0 +1,24 @@
+version: '3.7'
+
+services:
+  mariadb:
+    container_name: mariadb
+    build: requirements/mariadb
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    restart: always
+    env_file:
+      - .env
+
+  wordpress:
+    container_name: wordpress
+    build: requirements/wordpress
+    volumes:
+      - wordpress_data:/var/www/html
+    restart: always
+    env_file:
+      - .env
+
+volumes:
+  mariadb_data:
+  wordpress_data:
