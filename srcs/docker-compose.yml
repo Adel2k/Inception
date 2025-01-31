@@ -1,24 +1,59 @@
-version: '3.7'
+version: "3"
 
 services:
-  mariadb:
-    container_name: mariadb
-    build: requirements/mariadb
+  nginx:
+    container_name: nginx
+    depends_on:
+      - wordpress
+    build: ./requirements/nginx/
     volumes:
-      - mariadb_data:/var/lib/mysql
+      - wp_volume:/var/www/html/
     restart: always
+    networks:
+      - bridge-network
     env_file:
       - .env
+    ports:
+      - "443:443"
+
+  mariadb:
+    container_name: mariadb
+    build: ./requirements/mariadb/
+    volumes:
+      - db_volume:/var/lib/mysql/
+    networks:
+      - bridge-network
+    env_file:
+      - .env
+    restart: always
 
   wordpress:
     container_name: wordpress
-    build: requirements/wordpress
+    depends_on:
+      - mariadb
+    build: ./requirements/wordpress/
     volumes:
-      - wordpress_data:/var/www/html
+      - wp_volume:/var/www/html/
     restart: always
+    networks:
+      - bridge-network
     env_file:
       - .env
-
+    
 volumes:
-  mariadb_data:
-  wordpress_data:
+  wp_volume:
+    driver: local
+    driver_opts:
+      device: /home/adel/42/Inception/srcs/requirements/data/wordpress
+      o: bind
+      type: none
+  db_volume:
+    driver: local
+    driver_opts:
+      device: /home/adel/42/Inception/srcs/requirements/data/mariadb
+      o: bind
+      type: none
+
+networks:
+  bridge-network:
+    driver: bridge

@@ -1,10 +1,17 @@
 FROM debian:buster
 
-RUN apt -y update && apt install -y nginx && apt install openssl -y
+RUN apt-get update -y && apt-get upgrade -y
 
-COPY ./conf/default /etc/nginx/sites-available/default
+RUN apt-get install -y nginx openssl && rm -rf /var/lib/apt/lists/*
 
-COPY ./tools/nginx_start.sh /
+COPY ./conf/default.conf /etc/nginx/sites-available/
 
-RUN chmod +x ./nginx_start.sh
-CMD [ "/nginx_start.sh" ]
+COPY ./tools/run_nginx.sh /
+
+WORKDIR /
+
+EXPOSE 443
+
+RUN chmod +x run_nginx.sh
+
+CMD ["/run_nginx.sh"]

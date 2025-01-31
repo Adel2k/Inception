@@ -1,10 +1,17 @@
-FROM mariadb:latest
+FROM debian:buster
 
-ENV MYSQL_ROOT_PASSWORD=rootpassword
-ENV MYSQL_DATABASE=wordpress
-ENV MYSQL_USER=wpuser
-ENV MYSQL_PASSWORD=wppassword
+RUN apt-get update -y && apt-get upgrade -y
 
-COPY ./tools/init.sql /docker-entrypoint-initdb.d/
+RUN apt install -y mariadb-server mariadb-client && rm -rf /var/lib/apt/lists/*
+
+COPY ./conf/mariadb.conf /etc/mysql/mariadb.conf.d/
+
+COPY ./tools/run-mariadb.sh /
+
+WORKDIR /
+
+RUN chmod +x /run-mariadb.sh
 
 EXPOSE 3306
+
+CMD ["/run-mariadb.sh"]
