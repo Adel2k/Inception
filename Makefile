@@ -1,6 +1,4 @@
-all :
-	docker-compose -f ./srcs/docker-compose.yml build --no-cache 
-	docker-compose -f ./srcs/docker-compose.yml up
+all : up
 
 
 up : 
@@ -11,9 +9,6 @@ down :
 
 stop : 
 	@docker-compose -f ./srcs/docker-compose.yml stop
-
-re:
-	@docker compose -f scrs/docker-compose.yml up -d --build
 
 start : 
 	@docker-compose -f ./srcs/docker-compose.yml start

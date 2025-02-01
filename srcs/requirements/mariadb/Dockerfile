@@ -1,17 +1,17 @@
 FROM debian:buster
 
-RUN apt-get update -y && apt-get upgrade -y
+RUN apt-get update -y && apt-get upgrade -y && \
+    apt-get install -y mariadb-server mariadb-client && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN apt install -y mariadb-server mariadb-client && rm -rf /var/lib/apt/lists/*
+COPY ./conf/mariadb.conf /etc/mysql/mariadb.conf.d/mariadb.conf
 
-COPY ./conf/mariadb.conf /etc/mysql/mariadb.conf.d/
+COPY ./tools/run-mariadb.sh /usr/local/bin/run-mariadb.sh
 
-COPY ./tools/run-mariadb.sh /
+WORKDIR /usr/local/bin/
 
-WORKDIR /
-
-RUN chmod +x /run-mariadb.sh
+RUN chmod +x run-mariadb.sh
 
 EXPOSE 3306
 
-CMD ["/run-mariadb.sh"]
+CMD ["/usr/local/bin/run-mariadb.sh"]

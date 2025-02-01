@@ -20,7 +20,7 @@ services:
     container_name: mariadb
     build: ./requirements/mariadb/
     volumes:
-      - db_volume:/var/lib/mysql/
+      - /home/adel/42/Inception/srcs/requirements/data/mariadb:/var/lib/mysql
     networks:
       - bridge-network
     env_file:
@@ -33,7 +33,7 @@ services:
       - mariadb
     build: ./requirements/wordpress/
     volumes:
-      - wp_volume:/var/www/html/
+      - /home/adel/data/wordpress:/var/www/html/
     restart: always
     networks:
       - bridge-network
@@ -44,7 +44,7 @@ volumes:
   wp_volume:
     driver: local
     driver_opts:
-      device: /home/adel/42/Inception/srcs/requirements/data/wordpress
+      device: /home/adel/data/wordpress
       o: bind
       type: none
   db_volume:

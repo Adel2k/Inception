@@ -1,10 +1,22 @@
 #!/bin/bash
+WP_DIR="/home/adel/data/wordpress"
 
 mkdir -p /var/www/html
 cd /var/www/html
 
 chmod -R 755 /var/www/html
 chown -R www-data:www-data /var/www/html
+
+if [ ! -d "$WP_DIR" ]; then
+    echo "Directory $WP_DIR does not exist. Creating it..."
+    mkdir -p "$WP_DIR"
+fi
+
+echo "Setting permissions for $WP_DIR..."
+sudo chmod -R 775 "$WP_DIR"
+
+sudo mkdir -p /var/run/mysqld
+sudo chown -R mysql:mysql /var/run/mysqld
 
 if [ ! -e ./wp-config.php ]; then
     rm -rf *
@@ -20,19 +32,12 @@ if [ ! -e ./wp-config.php ]; then
     wp user create $WP_USER_USERNAME $WP_USER_EMAIL --role=$WP_USER_ROLE --user_pass=$WP_USER_PASSWORD --allow-root
     wp plugin update --all --allow-root
 
-    chmod -R a+w wp-config.php wp-content wp-content/plugins wp-content/themes wp-content/uploads
-	chown -R www-data:www-data wp-config.php wp-content wp-content/plugins wp-content/themes wp-content/uploads
+    chmod -R 755 wp-config.php wp-content wp-content/plugins wp-content/themes wp-content/uploads
+    chown -R www-data:www-data wp-config.php wp-content wp-content/plugins wp-content/themes wp-content/uploads
 
     wp plugin install redis-cache --activate --allow-root
 
-    # wp config set WP_REDIS_HOST $REDIS_HOSTNAME --allow-root
-    # wp config set WP_REDIS_PORT $REDIS_PORT --raw --allow-root
-    # wp config set WP_CACHE_KEY_SALT $DOMAIN_NAME --allow-root
-    # wp config set WP_REDIS_PASSWORD $REDIS_PASSWORD --allow-root
-    # wp config set WP_REDIS_CLIENT phpredis --allow-root
-
-	rm -rf ./wp-config-sample.php
-
+    rm -rf ./wp-config-sample.php
 fi
 
 if wp core update --allow-root; then
