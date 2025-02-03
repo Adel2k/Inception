@@ -1,19 +1,10 @@
 #!/bin/bash
-WP_DIR="/home/adel/data/wordpress"
 
 mkdir -p /var/www/html
 cd /var/www/html
 
 chmod -R 755 /var/www/html
 chown -R www-data:www-data /var/www/html
-
-if [ ! -d "$WP_DIR" ]; then
-    echo "Directory $WP_DIR does not exist. Creating it..."
-    mkdir -p "$WP_DIR"
-fi
-
-echo "Setting permissions for $WP_DIR..."
-sudo chmod -R 775 "$WP_DIR"
 
 sudo mkdir -p /var/run/mysqld
 sudo chown -R mysql:mysql /var/run/mysqld

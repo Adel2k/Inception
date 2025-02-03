@@ -1,6 +1,6 @@
-FROM debian:bookworm-slim
+FROM debian:bullseye
 
-ENV PHP_VERSION 8.2
+ENV PHP_VERSION 7.4
 
 RUN mkdir -p /run/php
 
