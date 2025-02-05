@@ -1,20 +1,31 @@
 #!/bin/bash
 
+# Ensure necessary directories exist
 mkdir -p /var/run/mysqld
 chown -R mysql:mysql /var/lib/mysql
 chmod -R 755 /var/lib/mysql
 
-service mysql start
+# Initialize database if it’s missing
+if [ ! -d "/var/lib/mysql/mysql" ]; then
+    mysql_install_db --user=mysql --datadir=/var/lib/mysql
+fi
 
-echo "CREATE DATABASE IF NOT EXISTS $MYSQL_DB ;" > db.sql
-echo "CREATE USER IF NOT EXISTS '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PASSWORD' ;" >> db.sql
-echo "GRANT ALL PRIVILEGES ON $MYSQL_DB.* TO '$MYSQL_USER'@'%' ;" >> db.sql
-echo "FLUSH PRIVILEGES;" >> db.sql
+# Start MariaDB in the background
+mysqld_safe --datadir=/var/lib/mysql &
 
-mysql < db.sql
+# Wait for MariaDB to start
+sleep 5
 
-sleep 2
+# Create database and user if they don’t exist
+mysql -u root <<EOF
+CREATE DATABASE IF NOT EXISTS $MYSQL_DB;
+CREATE USER IF NOT EXISTS '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PASSWORD';
+GRANT ALL PRIVILEGES ON $MYSQL_DB.* TO '$MYSQL_USER'@'%';
+FLUSH PRIVILEGES;
+EOF
 
-kill $(cat /var/run/mysqld/mysqld.pid)
+# Shutdown background MariaDB process
+mysqladmin -u root shutdown
 
-mysqld
+# Start MariaDB in the foreground
+exec mysqld

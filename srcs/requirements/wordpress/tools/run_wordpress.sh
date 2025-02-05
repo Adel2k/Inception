@@ -6,17 +6,14 @@ cd /var/www/html
 chmod -R 755 /var/www/html
 chown -R www-data:www-data /var/www/html
 
-sudo mkdir -p /var/run/mysqld
-sudo chown -R mysql:mysql /var/run/mysqld
-
 if [ ! -e ./wp-config.php ]; then
     rm -rf *
     wp core download --allow-root
 
-    sed -i "s/username_here/$MYSQL_USER/g" wp-config-sample.php
-    sed -i "s/password_here/$MYSQL_PASSWORD/g" wp-config-sample.php
-    sed -i "s/localhost/$MYSQL_HOSTNAME/g" wp-config-sample.php
-    sed -i "s/database_name_here/$MYSQL_DB/g" wp-config-sample.php
+    sed -i "s/username_here/user/g" wp-config-sample.php
+    sed -i "s/password_here/password/g" wp-config-sample.php
+    sed -i "s/localhost/mariadb/g" wp-config-sample.php
+    sed -i "s/database_name_here/db/g" wp-config-sample.php
     cp wp-config-sample.php wp-config.php
 
     wp core install --url=$DOMAIN_NAME --title=$WP_TITLE --admin_user=$WP_ROOT_USER_USERNAME --admin_password=$WP_ROOT_USER_PASSWORD --admin_email=$WP_ROOT_USER_EMAIL --skip-email --allow-root
@@ -39,4 +36,4 @@ fi
 
 sleep 10
 
-/usr/sbin/php-fpm8.2 -F
+/usr/sbin/php-fpm7.4 -F

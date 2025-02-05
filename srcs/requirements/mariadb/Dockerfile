@@ -1,17 +1,17 @@
 FROM debian:bullseye
 
-RUN apt-get update -y && apt-get upgrade -y && \
-    apt-get install -y mariadb-server mariadb-client && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update -y && apt-get upgrade -y
 
-COPY ./conf/mariadb.conf /etc/mysql/mariadb.conf.d/mariadb.conf
+RUN apt install mariadb-server mariadb-client -y && rm -rf /var/lib/apt/lists/*
 
-COPY ./tools/run-mariadb.sh /usr/local/bin/run-mariadb.sh
+COPY ./conf/50-server.cnf /etc/mysql/mariadb.conf.d/
 
-WORKDIR /usr/local/bin/
+COPY ./tools/run-mariadb.sh /
 
-RUN chmod +x run-mariadb.sh
+WORKDIR /
+
+RUN chmod +x /run-mariadb.sh
 
 EXPOSE 3306
 
-CMD ["/usr/local/bin/run-mariadb.sh"]
+CMD ["/run-mariadb.sh"]
