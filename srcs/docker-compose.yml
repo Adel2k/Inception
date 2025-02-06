@@ -31,15 +31,28 @@ services:
     container_name: wordpress
     depends_on:
       - mariadb
+      - redis
     build: ./requirements/wordpress/
     volumes:
       - /home/$USER/data/wordpress:/var/www/html/
+      - ./static:/usr/share/nginx/html
     restart: always
     networks:
       - bridge-network
     env_file:
       - .env
-    
+
+  redis:
+    container_name: redis
+    build: ./requirements/bonus/redis/
+    volumes:
+      - /home/$USER/data/redis:/data
+    restart: always
+    networks:
+      - bridge-network
+    env_file:
+      - .env
+
 volumes:
   wp_volume:
     driver: local
@@ -57,4 +70,3 @@ volumes:
 networks:
   bridge-network:
     driver: bridge
-

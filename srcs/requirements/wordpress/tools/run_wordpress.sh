@@ -69,7 +69,7 @@ if [ ! -f "$WP_PATH/wp-config.php" ]; then
     configure_wordpress
     install_wordpress
     setup_permissions
-    # install_plugins
+    install_plugins
     cleanup
 fi
 
