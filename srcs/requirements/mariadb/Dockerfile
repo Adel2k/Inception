@@ -8,7 +8,8 @@ COPY ./conf/50-server.cnf /etc/mysql/mariadb.conf.d/
 
 COPY ./tools/run-mariadb.sh /
 
-WORKDIR /
+WORKDIR /cat /var/log/mysql/error.log
+
 
 RUN chmod +x /run-mariadb.sh
 

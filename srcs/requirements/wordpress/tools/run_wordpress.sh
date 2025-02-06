@@ -16,10 +16,10 @@ download_wordpress() {
 configure_wordpress() {
     echo "Configuring WordPress..."
     cp wp-config-sample.php wp-config.php
-    sed -i "s/database_name_here/$DB_NAME/g" wp-config.php
     sed -i "s/username_here/$DB_USER/g" wp-config.php
     sed -i "s/password_here/$DB_PASSWORD/g" wp-config.php
     sed -i "s/localhost/$DB_HOST/g" wp-config.php
+    sed -i "s/database_name_here/$DB_NAME/g" wp-config.php
 }
 
 install_wordpress() {
@@ -36,8 +36,8 @@ install_wordpress() {
 
 setup_permissions() {
     echo "Setting up permissions..."
-    chmod -R 755 wp-config.php wp-content wp-content/plugins wp-content/themes wp-content/uploads
-    chown -R www-data:www-data wp-config.php wp-content wp-content/plugins wp-content/themes wp-content/uploads
+    chmod -R 755 $WP_PATH
+    chown -R www-data:www-data $WP_PATH
 }
 
 update_wordpress() {
@@ -69,7 +69,7 @@ if [ ! -f "$WP_PATH/wp-config.php" ]; then
     configure_wordpress
     install_wordpress
     setup_permissions
-    install_plugins
+    # install_plugins
     cleanup
 fi
 

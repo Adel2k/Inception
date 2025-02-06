@@ -39,7 +39,7 @@ clean: down
 
 fclean: clean
 	@echo "${LIGTH_PURPLE}Removing Docker images...${RESET}"
-	@docker rmi $(docker images -q)
+	@docker rmi -f srcs_mariadb srcs_nginx srcs_wordpress
 	@echo "${LIGTH_PURPLE}Done...${RESET}"
 
 .PHONY: all re up down hard_down start stop create_dirs remove_volumes
