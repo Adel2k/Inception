@@ -8,6 +8,7 @@ services:
     build: ./requirements/nginx/
     volumes:
       - wp_volume:/var/www/html/
+      - ./nginx_logs:/var/log/nginx  
     restart: always
     networks:
       - bridge-network
@@ -20,7 +21,7 @@ services:
     container_name: mariadb
     build: ./requirements/mariadb/
     volumes:
-      - /home/$USER/data/mariadb:/var/lib/mysql
+      - db_volume:/var/lib/mysql
     networks:
       - bridge-network
     env_file:
@@ -34,7 +35,7 @@ services:
       - redis
     build: ./requirements/wordpress/
     volumes:
-      - /home/$USER/data/wordpress:/var/www/html/
+      - wp_volume:/var/www/html/
       - ./static:/usr/share/nginx/html
     restart: always
     networks:
@@ -46,7 +47,7 @@ services:
     container_name: redis
     build: ./requirements/bonus/redis/
     volumes:
-      - /home/$USER/data/redis:/data
+      - redis_volume:/data
     restart: always
     networks:
       - bridge-network
@@ -60,12 +61,50 @@ services:
       - "21:21"
       - "21100-21110:21100-21110"
     volumes:
-      - /home/$USER/data/wordpress:/var/www/html"
+      - wp_volume:/var/www/html"
     restart: always
     networks:
       - bridge-network
     env_file:
       - .env
+
+  adminer:
+    container_name: adminer
+    build: ./requirements/bonus/adminer/
+    ports:
+      - "9000:9000"
+    restart: always
+    networks:
+      - bridge-network
+    volumes:
+      - adminer_volume:/data
+
+  fail2ban:
+    build: ./requirements/bonus/fail2ban/
+    container_name: fail2ban
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN  # Allow Fail2Ban to modify firewall rules
+    networks:
+      - bridge-network  # Use the same network as other services
+    volumes:
+      - ./logs/nginx:/var/log/nginx
+      - ./logs/mariadb:/var/log/mysql
+      - ./logs/redis:/var/log/redis
+      - ./logs/ftp:/var/log/ftp
+      - /var/log/auth.log:/var/log/auth.log  # Host SSH logs
+    env_file:
+      - .env
+  website:
+    container_name: website
+    build: ./requirements/bonus/website/
+    restart: always
+    networks:
+      - bridge-network
+    depends_on:
+      - nginx
+    ports:
+      - "1111:1111"
 
 volumes:
   wp_volume:
@@ -75,6 +114,18 @@ volumes:
       o: bind
       type: none
   db_volume:
+    driver: local
+    driver_opts:
+      device: /home/$USER/data/mariadb
+      o: bind
+      type: none
+  adminer_volume:
+    driver: local
+    driver_opts:
+      device: /home/$USER/data/mariadb
+      o: bind
+      type: none
+  redis_volume:
     driver: local
     driver_opts:
       device: /home/$USER/data/mariadb

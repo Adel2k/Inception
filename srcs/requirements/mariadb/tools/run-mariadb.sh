@@ -17,13 +17,15 @@ done
 
 
 cat <<EOF > db.sql
-CREATE DATABASE IF NOT EXISTS $DB_NAME;
+CREATE DATABASE IF NOT EXISTS \`$DB_NAME\`;
 CREATE USER IF NOT EXISTS '$DB_USER'@'%' IDENTIFIED BY '$DB_PASSWORD';
-GRANT ALL PRIVILEGES ON $DB_NAME.* TO '$DB_USER'@'%';
+GRANT ALL PRIVILEGES ON \`$DB_NAME\`.* TO '$DB_USER'@'%';
 FLUSH PRIVILEGES;
-UPDATE wp_options SET option_value = 'https://localhost' WHERE option_name = 'https://localhost';
+
+UPDATE wp_options SET option_value = 'https://localhost' WHERE option_name = 'siteurl';
 UPDATE wp_options SET option_value = 'https://localhost' WHERE option_name = 'home';
 EOF
+
 
 mysql < db.sql
 
