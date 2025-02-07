@@ -53,6 +53,20 @@ services:
     env_file:
       - .env
 
+  ftp:
+    container_name: ftp
+    build: ./requirements/bonus/ftp/
+    ports:
+      - "21:21"
+      - "21100-21110:21100-21110"
+    volumes:
+      - /home/$USER/data/wordpress:/var/www/html"
+    restart: always
+    networks:
+      - bridge-network
+    env_file:
+      - .env
+
 volumes:
   wp_volume:
     driver: local

@@ -4,8 +4,8 @@ ENV PHP_VERSION 7.4
 
 RUN mkdir -p /run/php
 
-RUN	apt-get update -y && apt-get upgrade -y
-RUN apt-get install -y \
+RUN	apt update -y && apt upgrade -y
+RUN apt install -y \
 	curl \
 	wget \
 	php${PHP_VERSION} \
