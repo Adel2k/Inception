@@ -15,16 +15,6 @@ up:
 	@docker-compose -f ./srcs/docker-compose.yml up -d --build 
 	@echo "${LIGTH_PURPLE}Done...${RESET}"
 
-start:
-	@echo "${LIGTH_PURPLE}Starting containers...${RESET}"
-	@docker-compose -f ./srcs/docker-compose.yml start
-	@echo "${LIGTH_PURPLE}Done...${RESET}"
-
-stop:
-	@echo "${LIGTH_PURPLE}Stopping containers...${RESET}"
-	@docker-compose -f ./srcs/docker-compose.yml stop
-	@echo "${LIGTH_PURPLE}Done...${RESET}"
-
 down:
 	@echo "${LIGTH_PURPLE}Shutting down containers...${RESET}"
 	@docker-compose -f ./srcs/docker-compose.yml down
@@ -32,14 +22,14 @@ down:
 
 clean: down
 	@echo "${LIGTH_PURPLE}Cleaning up containers, volumes, and networks...${RESET}"
-	@docker volume rm srcs_db_volume srcs_wp_volume
+	@docker volume rm srcs_adminer_volume srcs_db_volume srcs_redis_volume srcs_wp_volume
 	@sudo rm -rf /home/$(USER)/data/wordpress
 	@sudo rm -rf /home/$(USER)/data/mariadb
 	@echo "${LIGTH_PURPLE}Done...${RESET}"
 
 fclean: clean
 	@echo "${LIGTH_PURPLE}Removing Docker images...${RESET}"
-	@docker rmi -f srcs_mariadb srcs_nginx srcs_wordpress
+	@docker rmi -f $(docker images -q)
 	@echo "${LIGTH_PURPLE}Done...${RESET}"
 
-.PHONY: all re up down hard_down start stop create_dirs remove_volumes
+.PHONY: all re up down create_dirs fclean clean

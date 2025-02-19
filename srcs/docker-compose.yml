@@ -3,12 +3,12 @@ version: "3.3"
 services:
   nginx:
     container_name: nginx
+    image: nginx
     depends_on:
       - wordpress
     build: ./requirements/nginx/
     volumes:
       - wp_volume:/var/www/html/
-      - ./nginx_logs:/var/log/nginx  
     restart: always
     networks:
       - bridge-network
@@ -19,6 +19,7 @@ services:
 
   mariadb:
     container_name: mariadb
+    image: mariadb
     build: ./requirements/mariadb/
     volumes:
       - db_volume:/var/lib/mysql
@@ -30,13 +31,13 @@ services:
 
   wordpress:
     container_name: wordpress
+    image: wordpress
     depends_on:
       - mariadb
       - redis
     build: ./requirements/wordpress/
     volumes:
       - wp_volume:/var/www/html/
-      - ./static:/usr/share/nginx/html
     restart: always
     networks:
       - bridge-network
@@ -45,6 +46,7 @@ services:
 
   redis:
     container_name: redis
+    image: redis
     build: ./requirements/bonus/redis/
     volumes:
       - redis_volume:/data
@@ -56,6 +58,7 @@ services:
 
   ftp:
     container_name: ftp
+    image: ftp
     build: ./requirements/bonus/ftp/
     ports:
       - "21:21"
@@ -70,6 +73,7 @@ services:
 
   adminer:
     container_name: adminer
+    image: adminer
     build: ./requirements/bonus/adminer/
     ports:
       - "9000:9000"
@@ -78,33 +82,6 @@ services:
       - bridge-network
     volumes:
       - adminer_volume:/data
-
-  fail2ban:
-    build: ./requirements/bonus/fail2ban/
-    container_name: fail2ban
-    restart: unless-stopped
-    cap_add:
-      - NET_ADMIN  # Allow Fail2Ban to modify firewall rules
-    networks:
-      - bridge-network  # Use the same network as other services
-    volumes:
-      - ./logs/nginx:/var/log/nginx
-      - ./logs/mariadb:/var/log/mysql
-      - ./logs/redis:/var/log/redis
-      - ./logs/ftp:/var/log/ftp
-      - /var/log/auth.log:/var/log/auth.log  # Host SSH logs
-    env_file:
-      - .env
-  website:
-    container_name: website
-    build: ./requirements/bonus/website/
-    restart: always
-    networks:
-      - bridge-network
-    depends_on:
-      - nginx
-    ports:
-      - "1111:1111"
 
 volumes:
   wp_volume:
