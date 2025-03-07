@@ -1,10 +1,5 @@
 #!/bin/bash
 
-DOMAIN_NAME="aeminian.42.fr"
-
-CERTS_="/etc/ssl/certs/$DOMAIN_NAME.crt"
-KEYOUT_="/etc/ssl/private/$DOMAIN_NAME.key"
-
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout $KEYOUT_ -out $CERTS_ -subj "/C=AM/L=Yerevan/O=42/OU=student/CN=$DOMAIN_NAME"
 
 cd /etc/nginx/sites-available/
